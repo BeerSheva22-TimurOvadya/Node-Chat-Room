@@ -1,0 +1,9 @@
+{
+    "mongodb": {
+        "env_uri": "ATLAS_URI_CHATROOM_PROD"
+    },
+    "jwt": {
+        "env_secret":"JWT_SECRET_PROD",
+        "expiresIn":"30 days"
+    }
+}

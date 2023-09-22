@@ -1,0 +1,23 @@
+{
+    "server": {
+        "port": 8080
+    },
+    "mongodb": {
+        "env_uri": "ATLAS_URI_CHATROOM_TEST",
+        "db": "chatroom"
+    },
+    "jwt": {
+        "env_secret": "JWT_SECRET_TEST",
+        "expiresIn": "30 days"
+    },
+    "message": {
+        "minDate": "1950-01-01",
+        "maxDate": "2004-12-31",
+        "minId": 100000,
+        "maxId": 999999,
+        "minSalary": 7000,
+        "maxSalary": 50000,
+        "departments": ["QA", "Audit", "Accounting", "Development", "Management"]
+    }
+    
+}

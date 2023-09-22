@@ -7,18 +7,16 @@ export default class ChatRoom {
     }
     addConnection(clientName, connectionId, ws) {
         this.#connections[connectionId] = { client: clientName, socket: ws };
-        if (this.#clients[clientName]) {
-            this.#clients[clientName].connections.push(connectionId);
+        if (this.#clients[clientName]) {            
+            this.#clients[clientName].push(connectionId);
         } else {
-            this.#clients[clientName].connections = [connectionId];
-            // this.#clients[clientName] = { connections: [] };
+            this.#clients[clientName] = [connectionId];            
         }
     }
 
     removeConnection(connectionId) {
         const client = this.#connections[connectionId].client;
-        const clientConnections = this.#clients[client];
-        // const clientConnections = this.#clients[client].connections;
+        const clientConnections = this.#clients[client];       
         const index = clientConnections.findIndex((id) => id == connectionId);
         if (index < 0) {
             throw `illegal state with connection ${connectionId}`;
@@ -42,5 +40,9 @@ export default class ChatRoom {
 
     getClients() {
         return Object.keys(this.#clients);
+    }
+
+    getAllWebSockets(){
+        return Object.values(this.#connections).map(c => c.socket)
     }
 }

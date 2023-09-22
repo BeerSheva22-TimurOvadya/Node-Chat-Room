@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\chat-appl.mjs",
+            "env" : {
+                "ATLAS_URI_CHATROOM_TEST":"mongodb+srv://root:12345.com@cluster0.dojwwf6.mongodb.net/chatroom?retryWrites=true&w=majority",
+                "JWT_SECRET_TEST":"jwt_secret"
+            }
+        }
+    ]
+}
