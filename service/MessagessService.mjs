@@ -1,6 +1,7 @@
 
 import MongoConnection from '../domain/MongoConnection.mjs';
 import config from 'config';
+import { ObjectId } from 'mongodb';
 
 const MONGO_ENV_URI = 'mongodb.env_uri';
 const MONGO_DB_NAME = 'mongodb.db';
@@ -35,7 +36,7 @@ export default class MessagesService {
     }
     
     async deleteMessage(messageId) {
-        return this.#collection.deleteOne({ _id: messageId });
+        return this.#collection.deleteOne({ _id: new ObjectId(messageId) });
     }
     
 }
