@@ -57,3 +57,13 @@ users.post("/login", asyncHandler(
         res.send({accessToken});
     }
 ))
+
+users.delete('/:username', authVerification('ADMIN'), asyncHandler(async (req, res) => {
+    await usersService.deleteUser(req.params.username);
+    res.status(204).send();
+}));
+
+users.patch('/:username/status', authVerification('ADMIN'), asyncHandler(async (req, res) => {
+    await usersService.updateUserStatus(req.params.username, req.body.status);
+    res.status(204).send();
+}));

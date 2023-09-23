@@ -43,6 +43,14 @@ export default class UsersService {
         const documents = await this.#collection.find({}).toArray();
         return documents.map(toAccount);
     }
+
+    async updateUserStatus(username, status) {
+        return this.#collection.updateOne({ _id: username }, { $set: { status: status } });
+    }
+    
+    async deleteUser(username) {
+        return this.#collection.deleteOne({ _id: username });
+    }
 }
 function getJwt(username, roles) {
     return jwt.sign({ roles }, process.env[config.get(ENV_JWT_SECRET)], {

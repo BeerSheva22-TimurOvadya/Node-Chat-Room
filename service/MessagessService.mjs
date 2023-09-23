@@ -1,4 +1,4 @@
-// service\MessagesService.mjs
+
 import MongoConnection from '../domain/MongoConnection.mjs';
 import config from 'config';
 
@@ -25,6 +25,17 @@ export default class MessagesService {
     
     async markMessagesAsRead(username) {
         return this.#collection.updateMany({ to: username, read: false }, { $set: { read: true } });
+    }
+    async getAllMessages() {
+        return this.#collection.find({}).toArray();
+    }
+    
+    async getUserMessages(username) {
+        return this.#collection.find({ $or: [{ from: username }, { to: username }] }).toArray();
+    }
+    
+    async deleteMessage(messageId) {
+        return this.#collection.deleteOne({ _id: messageId });
     }
     
 }
