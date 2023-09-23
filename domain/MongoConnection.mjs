@@ -8,9 +8,5 @@ export default class MongoConnection {
     }
     getCollection(collectionName) {
         return this.#db.collection(collectionName);
-    }
-
-    getMessageCollection() {
-        return this.#db.collection('messages');
-    }
+    }   
 }
