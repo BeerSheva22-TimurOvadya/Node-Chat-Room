@@ -13,16 +13,27 @@ const schema = Joi.object({
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).required()
 })
 users.use(validate(schema))
-users.post('', authVerification("ADMIN_ACCOUNTS"), valid,  asyncHandler(async (req, res) => {
-    
+users.post('', asyncHandler(async (req, res) => {
+    const { roles } = req.body;
+    if (roles.includes('ADMIN') && !req.user) {
+        res.status(401).send('Admin accounts must be created using a bearer token');
+        return;
+    }
+
+    if (roles.includes('ADMIN') && !req.user.roles.includes('ADMIN_ACCOUNTS')) {
+        res.status(403).send('You do not have permission to create admin accounts');
+        return;
+    }
+
     const accountRes = await usersService.addAccount(req.body);
     if (accountRes == null) {
-        res.status(400);
-        throw `account ${req.body.username} already exists`
+        res.status(400).send(`account ${req.body.username} already exists`);
+        return;
     }
-     res.status(201).send(accountRes);
-  
+
+    res.status(201).send(accountRes);
 }));
+
 users.get("/:username",authVerification("ADMIN_ACCOUNTS", "ADMIN", "USER"), asyncHandler(
     async (req,res) => {
         const username = req.params.username;
