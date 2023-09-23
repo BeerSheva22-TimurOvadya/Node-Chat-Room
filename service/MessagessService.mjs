@@ -14,9 +14,17 @@ export default class MessagesService {
         this.#collection = connection.getCollection('messages');
     }
 
-    async saveMessage(from, to, text) {
+    async saveMessage(from, to, text, read = false) {
         const now = new Date();
-        const message = { from, to, text, timestamp: now };
+        const message = { from, to, text, timestamp: now, read };
         return this.#collection.insertOne(message);
     }
+    async getUnreadMessages(username) {
+        return this.#collection.find({ to: username, read: false }).toArray();
+    }
+    
+    async markMessagesAsRead(username) {
+        return this.#collection.updateMany({ to: username, read: false }, { $set: { read: true } });
+    }
+    
 }

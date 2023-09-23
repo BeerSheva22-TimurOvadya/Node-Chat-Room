@@ -39,6 +39,10 @@ export default class UsersService {
         }
         return accessToken;
     }
+    async getAllAccounts() {
+        const documents = await this.#collection.find({}).toArray();
+        return documents.map(toAccount);
+    }
 }
 function getJwt(username, roles) {
     return jwt.sign({ roles }, process.env[config.get(ENV_JWT_SECRET)], {
