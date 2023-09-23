@@ -60,10 +60,10 @@ users.post("/login", asyncHandler(
 
 users.delete('/:username', authVerification('ADMIN'), asyncHandler(async (req, res) => {
     await usersService.deleteUser(req.params.username);
-    res.status(204).send();
+    res.status(201).send(`User ${req.params.username} has been deleted`);
 }));
 
-users.patch('/:username/status', authVerification('ADMIN'), asyncHandler(async (req, res) => {
+users.put('/:username/status', authVerification('ADMIN'), asyncHandler(async (req, res) => {
     await usersService.updateUserStatus(req.params.username, req.body.status);
-    res.status(204).send();
+    res.status(201).send(`User ${req.params.username} status was changed to ${req.body.status}`);
 }));

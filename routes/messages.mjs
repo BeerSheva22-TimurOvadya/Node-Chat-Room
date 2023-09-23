@@ -17,5 +17,5 @@ messagesRouter.get('/', asyncHandler(async (req, res) => {
 
 messagesRouter.delete('/:messageId', asyncHandler(async (req, res) => {
     await messagesService.deleteMessage(req.params.messageId);
-    res.status(204).send();
+    res.status(201).send(`Message ${req.params.messageId} has been deleted`);
 }));
