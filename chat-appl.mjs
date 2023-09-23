@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import expressWs from 'express-ws';
 import errorHandler from './middleware/errorHandler.mjs';
 import ChatRoom from './service/ChatRoom.mjs';
-import { messages } from './routes/messages.mjs';
+
 import { users } from './routes/users.mjs';
 import config from 'config';
 import cors from 'cors';
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(auth);
 
-app.use('/messages', messages);
+
 app.use('/users', users);
 app.use(errorHandler);
 

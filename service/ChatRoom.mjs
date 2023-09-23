@@ -1,6 +1,6 @@
 export default class ChatRoom {
-    #clients; //<client name>: <array of connections ids>
-    #connections; //<connection id>: {client: <clientName>, socket: <Web socket>}
+    #clients; 
+    #connections; 
     constructor() {
         this.#clients = {};
         this.#connections = {};

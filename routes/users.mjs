@@ -4,7 +4,6 @@ import Joi from 'joi'
 import { validate } from '../middleware/validation.mjs';
 import UsersService from '../service/UsersService.mjs';
 import authVerification from '../middleware/authVerification.mjs';
-import valid from '../middleware/valid.mjs';
 export const users = express.Router();
 const usersService = new UsersService()
 const schema = Joi.object({
