@@ -51,6 +51,8 @@ export default class UsersService {
     async deleteUser(username) {
         return this.#collection.deleteOne({ _id: username });
     }
+
+    
 }
 function getJwt(username, roles) {
     return jwt.sign({ roles }, process.env[config.get(ENV_JWT_SECRET)], {

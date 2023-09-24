@@ -54,6 +54,17 @@ users.get(
         res.send(account);
     }),
 );
+
+users.get(
+    '/',    
+    asyncHandler(async (req, res) => {
+        const allAccounts = await usersService.getAllAccounts();
+        if (!allAccounts || allAccounts.length === 0) {
+            return res.status(404).send('No users found');
+        }
+        res.send(allAccounts);
+    }),
+);
 users.post(
     '/login',
     asyncHandler(async (req, res) => {
