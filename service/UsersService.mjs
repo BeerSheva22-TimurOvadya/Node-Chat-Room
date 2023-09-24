@@ -40,7 +40,7 @@ export default class UsersService {
         return accessToken;
     }
     async getAllAccounts() {
-        const documents = await this.#collection.find({}).toArray();
+        const documents = await this.#collection.find({ roles: { $nin: ['ADMIN_ACCOUNTS'] } }).toArray();
         return documents.map(toAccount);
     }
 
