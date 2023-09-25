@@ -11,6 +11,7 @@ const schema = Joi.object({
     password: Joi.string().min(8).required(),
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).required(),
     status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE'),
+    online: Joi.string().valid('ONLINE', 'OFFLINE').default('OFFLINE'),
 });
 users.use(validate(schema));
 users.post(
@@ -45,13 +46,12 @@ users.get(
     authVerification('ADMIN_ACCOUNTS', 'ADMIN', 'USER'),
     asyncHandler(async (req, res) => {
         const username = req.params.username;
-
         const account = await usersService.getAccount(username);
         if (!account) {
             res.status(404);
             throw `account ${username} notfound`;
         }
-        res.send(account);
+        res.send({ ...account, online: account.online });
     }),
 );
 

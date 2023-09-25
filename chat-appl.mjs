@@ -57,8 +57,13 @@ function processConnection(clientName, ws) {
     chatRoom.addConnection(clientName, connectionId, ws);
 
     sendUnreadMessages(clientName, ws);
+    usersService.updateUserOnlineStatus(clientName, 'ONLINE');
 
-    ws.on('close', () => chatRoom.removeConnection(connectionId));
+    ws.on('close', () => {
+        console.log('WebSocket is closing on beckend...');
+        chatRoom.removeConnection(connectionId);
+        usersService.updateUserOnlineStatus(clientName, 'OFFLINE');
+    });
     ws.on('message', processMessage.bind(undefined, clientName, ws));
 }
 

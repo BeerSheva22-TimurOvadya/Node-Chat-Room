@@ -52,6 +52,10 @@ export default class UsersService {
         return this.#collection.deleteOne({ _id: username });
     }
 
+    async updateUserOnlineStatus(username, online) {
+        return this.#collection.updateOne({ _id: username }, { $set: { online: online } });
+    }
+
     
 }
 function getJwt(username, roles) {
@@ -65,12 +69,13 @@ function toAccount(accountdb) {
         username: accountdb._id,
         roles: accountdb.roles,
         passwordHash: accountdb.passwordHash,
-        status: accountdb.status
+        status: accountdb.status,
+        online: accountdb.online
     };
     return res;
 }
 async function toAccountDB(account) {
     const passwordHash = await bcrypt.hash(account.password, 10);
-    const res = { _id: account.username, passwordHash, roles: account.roles, status: account.status || 'ACTIVE' };
+    const res = { _id: account.username, passwordHash, roles: account.roles, status: account.status || 'ACTIVE', online: account.online || 'OFFLINE' };
     return res;
 }
