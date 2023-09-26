@@ -33,6 +33,8 @@ users.post(
             ...req.body,
             status: req.body.status || 'ACTIVE',
         });
+        chatRoom.notifyAllClients({ type: 'added', data: accountRes });
+
         if (accountRes == null) {
             res.status(400).send(`account ${req.body.username} already exists`);
             return;
@@ -56,27 +58,15 @@ users.get(
     }),
 );
 
-// users.get(
-//     '/',    
-//     asyncHandler(async (req, res) => {
-//         const allAccounts = await usersService.getAllAccounts();
-//         if (!allAccounts || allAccounts.length === 0) {
-//             return res.status(404).send('No users found');
-//         }
-//         res.send(allAccounts);
-//     }),
-// );
 
 users.get(
     '/',
     asyncHandler(async (req, res) => {
-        const allAccounts = await usersService.getAllAccounts();
-        
+        const allAccounts = await usersService.getAllAccounts();        
         const clientsWithStatus = allAccounts.map((account) => ({
-            ...account, // используем spread-оператор для копирования всех свойств account
-            onlineStatus: chatRoom.getUserStatus(account.username) // добавляем onlineStatus
-        }));
-        
+            ...account, 
+            onlineStatus: chatRoom.getUserStatus(account.username)
+        }));        
         if (!allAccounts || allAccounts.length === 0) {
             return res.status(404).send('No users found');
         }
@@ -104,8 +94,8 @@ users.delete(
         if (!user) {
             return res.status(404).send(`User ${req.params.username} does not exist`);
         }
-
-        await usersService.deleteUser(req.params.username);
+        await usersService.deleteUser(req.params.username);        
+        chatRoom.notifyAllClients({ type: 'delete', data: { username: req.params.username } });
         res.status(201).send(`User ${req.params.username} has been deleted`);
     }),
 );
@@ -129,6 +119,9 @@ users.put(
         }
 
         await usersService.updateUserStatus(req.params.username, newStatus);
+        chatRoom.notifyAllClients({ type: 'statusChange', data: { username: req.params.username } });
         res.status(201).send(`User ${req.params.username} status was changed to ${newStatus}`);
     }),
 );
+
+

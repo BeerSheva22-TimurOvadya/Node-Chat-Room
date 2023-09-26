@@ -13,8 +13,10 @@ import auth from './middleware/auth.mjs';
 import MessagesService from './service/MessagessService.mjs';
 import UsersService from './service/UsersService.mjs';
 
+
 const app = express();
 const expressWsInstant = expressWs(app);
+
 export const chatRoom = new ChatRoom();
 const messagesService = new MessagesService();
 const usersService = new UsersService();
@@ -29,13 +31,13 @@ app.use('/messages', messagesRouter);
 app.use('/users', users);
 
 
-app.get('/contacts', (req, res) => {
+app.get('/uers', (req, res) => {
     res.send(chatRoom.getClients());
 });
 
 
 
-app.ws('/contacts/websocket', (ws, req) => {
+app.ws('/users/websocket', (ws, req) => {
     const clientName = ws.protocol || req.query.clientName;
     if (!clientName) {
         ws.send('Must be client name');
@@ -45,7 +47,7 @@ app.ws('/contacts/websocket', (ws, req) => {
     }
 });
 
-app.ws('/contacts/websocket/:clientName', (ws, req) => {
+app.ws('/users/websocket/:clientName', (ws, req) => {
     const clientName = req.params.clientName;
     processConnection(clientName, ws);
 });
@@ -61,9 +63,10 @@ function processConnection(clientName, ws) {
 
     sendUnreadMessages(clientName, ws);
     chatRoom.setUserStatus(clientName, 'ONLINE');
+    chatRoom.notifyAllClients({ type: 'onlineStatus'});
 
     ws.on('close', () => {
-        console.log('WebSocket is closing on beckend...');
+        chatRoom.notifyAllClients({ type: 'onlineStatus' });
         chatRoom.removeConnection(connectionId);
         chatRoom.setUserStatus(clientName, 'OFFLINE');
     });
@@ -106,6 +109,7 @@ async function processMessage(clientName, ws, message) {
         
         const objSent = JSON.stringify({ from: clientName, text });
         const recipients = chatRoom.getClientWebSockets(to);
+        chatRoom.notifyAllClients({ type: 'newMessage' });
         const isRecipientOnline = recipients && recipients.length > 0;
 
         if (isRecipientOnline) {

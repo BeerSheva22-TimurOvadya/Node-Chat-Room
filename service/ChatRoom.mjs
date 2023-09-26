@@ -59,4 +59,9 @@ export default class ChatRoom {
     getAllWebSockets(){
         return Object.values(this.#connections).map(c => c.socket)
     }
+
+    notifyAllClients(message) {
+        const allSockets = this.getAllWebSockets();
+        allSockets.forEach(socket => socket.send(JSON.stringify(message)));
+    }
 }
