@@ -33,7 +33,7 @@ users.post(
             ...req.body,
             status: req.body.status || 'ACTIVE',
         });
-        chatRoom.notifyAllClients({ type: 'added', data: accountRes });
+        
 
         if (accountRes == null) {
             res.status(400).send(`account ${req.body.username} already exists`);
@@ -95,7 +95,7 @@ users.delete(
             return res.status(404).send(`User ${req.params.username} does not exist`);
         }
         await usersService.deleteUser(req.params.username);        
-        chatRoom.notifyAllClients({ type: 'delete', data: { username: req.params.username } });
+       
         res.status(201).send(`User ${req.params.username} has been deleted`);
     }),
 );
@@ -118,8 +118,7 @@ users.put(
             return res.status(400).send(`User ${req.params.username} is already ${newStatus}`);
         }
 
-        await usersService.updateUserStatus(req.params.username, newStatus);
-        chatRoom.notifyAllClients({ type: 'statusChange', data: { username: req.params.username } });
+        await usersService.updateUserStatus(req.params.username, newStatus);        
         res.status(201).send(`User ${req.params.username} status was changed to ${newStatus}`);
     }),
 );

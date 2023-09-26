@@ -2,6 +2,7 @@ import MongoConnection from '../domain/MongoConnection.mjs';
 import config from 'config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { chatRoom } from '../chat-appl.mjs';
 const MONGO_ENV_URI = 'mongodb.env_uri';
 const MONGO_DB_NAME = 'mongodb.db';
 const ENV_JWT_SECRET = 'jwt.env_secret';
@@ -24,6 +25,7 @@ export default class UsersService {
                 throw error;
             }
         }
+        chatRoom.notifyAllClients({ type: 'account added', data: account });
         return account;
     }
 
@@ -45,10 +47,12 @@ export default class UsersService {
     }
 
     async updateUserStatus(username, status) {
+        chatRoom.notifyAllClients({ type: 'updateStatus', data: username });
         return this.#collection.updateOne({ _id: username }, { $set: { status: status } });
     }
     
     async deleteUser(username) {
+        chatRoom.notifyAllClients({ type: 'deleteAccount', data: username });
         return this.#collection.deleteOne({ _id: username });
     }
    

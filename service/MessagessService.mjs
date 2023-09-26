@@ -19,6 +19,7 @@ export default class MessagesService {
     async saveMessage(from, to, text, read = false) {
         const now = new Date();
         const message = { from, to, text, timestamp: now, read };
+        chatRoom.notifyAllClients({ type: 'newMessage', data: message.to});
         return this.#collection.insertOne(message);
     }
     async getUnreadMessages(username) {
@@ -37,7 +38,7 @@ export default class MessagesService {
     }
     
     async deleteMessage(messageId) {
-        chatRoom.notifyAllClients({ type: 'deleteMessage'});
+        chatRoom.notifyAllClients({ type: 'delete', data: messageId });
         return this.#collection.deleteOne({ _id: new ObjectId(messageId) });
     }
     

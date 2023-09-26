@@ -63,10 +63,9 @@ function processConnection(clientName, ws) {
 
     sendUnreadMessages(clientName, ws);
     chatRoom.setUserStatus(clientName, 'ONLINE');
-    chatRoom.notifyAllClients({ type: 'onlineStatus'});
+   
 
-    ws.on('close', () => {
-        chatRoom.notifyAllClients({ type: 'onlineStatus' });
+    ws.on('close', () => {        
         chatRoom.removeConnection(connectionId);
         chatRoom.setUserStatus(clientName, 'OFFLINE');
     });
@@ -108,8 +107,7 @@ async function processMessage(clientName, ws, message) {
         }
         
         const objSent = JSON.stringify({ from: clientName, text });
-        const recipients = chatRoom.getClientWebSockets(to);
-        chatRoom.notifyAllClients({ type: 'newMessage' });
+        const recipients = chatRoom.getClientWebSockets(to);        
         const isRecipientOnline = recipients && recipients.length > 0;
 
         if (isRecipientOnline) {
