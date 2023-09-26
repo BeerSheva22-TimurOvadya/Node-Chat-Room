@@ -1,10 +1,24 @@
 export default class ChatRoom {
     #clients; 
     #connections; 
+    #onlineStatus;  
+    
     constructor() {
         this.#clients = {};
         this.#connections = {};
+        this.#onlineStatus = {}; 
     }
+    
+    
+    setUserStatus(username, onlineStatus) {
+        this.#onlineStatus[username] = onlineStatus;
+    }
+    
+    
+    getUserStatus(username) {
+        return this.#onlineStatus[username] || 'OFFLINE';
+    }
+
     addConnection(clientName, connectionId, ws) {
         this.#connections[connectionId] = { client: clientName, socket: ws };
         if (this.#clients[clientName]) {            

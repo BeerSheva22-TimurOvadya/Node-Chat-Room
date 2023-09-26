@@ -4,14 +4,15 @@ import Joi from 'joi';
 import { validate } from '../middleware/validation.mjs';
 import UsersService from '../service/UsersService.mjs';
 import authVerification from '../middleware/authVerification.mjs';
+import { chatRoom } from '../chat-appl.mjs';
 export const users = express.Router();
 const usersService = new UsersService();
+
 const schema = Joi.object({
     username: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).required(),
-    status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE'),
-    online: Joi.string().valid('ONLINE', 'OFFLINE').default('OFFLINE'),
+    status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE')    
 });
 users.use(validate(schema));
 users.post(
@@ -55,14 +56,31 @@ users.get(
     }),
 );
 
+// users.get(
+//     '/',    
+//     asyncHandler(async (req, res) => {
+//         const allAccounts = await usersService.getAllAccounts();
+//         if (!allAccounts || allAccounts.length === 0) {
+//             return res.status(404).send('No users found');
+//         }
+//         res.send(allAccounts);
+//     }),
+// );
+
 users.get(
-    '/',    
+    '/',
     asyncHandler(async (req, res) => {
         const allAccounts = await usersService.getAllAccounts();
+        
+        const clientsWithStatus = allAccounts.map((account) => ({
+            ...account, // используем spread-оператор для копирования всех свойств account
+            onlineStatus: chatRoom.getUserStatus(account.username) // добавляем onlineStatus
+        }));
+        
         if (!allAccounts || allAccounts.length === 0) {
             return res.status(404).send('No users found');
         }
-        res.send(allAccounts);
+        res.send(clientsWithStatus);
     }),
 );
 users.post(

@@ -15,7 +15,7 @@ import UsersService from './service/UsersService.mjs';
 
 const app = express();
 const expressWsInstant = expressWs(app);
-const chatRoom = new ChatRoom();
+export const chatRoom = new ChatRoom();
 const messagesService = new MessagesService();
 const usersService = new UsersService();
 
@@ -32,6 +32,8 @@ app.use('/users', users);
 app.get('/contacts', (req, res) => {
     res.send(chatRoom.getClients());
 });
+
+
 
 app.ws('/contacts/websocket', (ws, req) => {
     const clientName = ws.protocol || req.query.clientName;
@@ -58,12 +60,12 @@ function processConnection(clientName, ws) {
     chatRoom.addConnection(clientName, connectionId, ws);
 
     sendUnreadMessages(clientName, ws);
-    usersService.updateUserOnlineStatus(clientName, 'ONLINE');
+    chatRoom.setUserStatus(clientName, 'ONLINE');
 
     ws.on('close', () => {
         console.log('WebSocket is closing on beckend...');
         chatRoom.removeConnection(connectionId);
-        usersService.updateUserOnlineStatus(clientName, 'OFFLINE');
+        chatRoom.setUserStatus(clientName, 'OFFLINE');
     });
     ws.on('message', processMessage.bind(undefined, clientName, ws));
 }
