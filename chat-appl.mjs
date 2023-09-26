@@ -27,7 +27,7 @@ app.use(auth);
 
 app.use('/messages', messagesRouter);
 app.use('/users', users);
-app.use(errorHandler);
+
 
 app.get('/contacts', (req, res) => {
     res.send(chatRoom.getClients());
@@ -51,6 +51,7 @@ app.ws('/contacts/websocket/:clientName', (ws, req) => {
 const port = process.env.PORT || config.get('server.port');
 const server = app.listen(port);
 server.on('listening', () => console.log(`server is listening on port ${server.address().port}`));
+app.use(errorHandler);
 
 function processConnection(clientName, ws) {
     const connectionId = crypto.randomUUID();
