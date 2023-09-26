@@ -31,7 +31,7 @@ app.use('/messages', messagesRouter);
 app.use('/users', users);
 
 
-app.get('/uers', (req, res) => {
+app.get('/users', (req, res) => {
     res.send(chatRoom.getClients());
 });
 
