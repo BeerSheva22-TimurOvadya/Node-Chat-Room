@@ -62,8 +62,7 @@ function processConnection(clientName, ws) {
     chatRoom.addConnection(clientName, connectionId, ws);
 
     sendUnreadMessages(clientName, ws);
-    chatRoom.setUserStatus(clientName, 'ONLINE');
-   
+    chatRoom.setUserStatus(clientName, 'ONLINE'); 
 
     ws.on('close', () => {        
         chatRoom.removeConnection(connectionId);
@@ -77,13 +76,13 @@ async function sendUnreadMessages(clientName, ws) {
         const unreadMessages = await messagesService.getUnreadMessages(clientName);
         unreadMessages.forEach((msg) => {
             ws.send(JSON.stringify({ from: msg.from, text: msg.text }));
-        });
-        
+        });        
         await messagesService.markMessagesAsRead(clientName);
     } catch (error) {
         console.error("Error sending unread messages", error);
     }
 }
+
 async function processMessage(clientName, ws, message) {
     try {
         const messageObj = JSON.parse(message.toString());
