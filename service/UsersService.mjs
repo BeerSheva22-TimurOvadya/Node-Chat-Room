@@ -75,6 +75,6 @@ function toAccount(accountdb) {
 }
 async function toAccountDB(account) {
     const passwordHash = await bcrypt.hash(account.password, 10);
-    const res = { _id: account.username, passwordHash, roles: account.roles, status: account.status || 'ACTIVE' };
+    const res = { _id: account.username, passwordHash, roles: account.roles || ['USER'], status: account.status || 'ACTIVE' };
     return res;
 }

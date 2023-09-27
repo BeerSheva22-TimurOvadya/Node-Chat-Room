@@ -11,14 +11,14 @@ const usersService = new UsersService();
 const schema = Joi.object({
     username: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
-    roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).required(),
+    roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).default(['USER']),
     status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE')    
 });
 users.use(validate(schema));
 users.post(
     '',
     asyncHandler(async (req, res) => {
-        const { roles } = req.body;
+        const roles = req.body.roles || ['USER'];
         if (roles.includes('ADMIN') && !req.user) {
             res.status(401).send('Admin accounts must be created using a bearer token');
             return;
@@ -31,6 +31,7 @@ users.post(
 
         const accountRes = await usersService.addAccount({
             ...req.body,
+            roles,
             status: req.body.status || 'ACTIVE',
         });
         
