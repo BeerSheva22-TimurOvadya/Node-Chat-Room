@@ -65,4 +65,6 @@ export default class ChatRoom {
         const allSockets = this.getAllWebSockets();
         allSockets.forEach(socket => socket.send(JSON.stringify(message)));
     }
+
+    
 }

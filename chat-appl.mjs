@@ -17,6 +17,7 @@ import UsersService from './service/UsersService.mjs';
 const app = express();
 const expressWsInstant = expressWs(app);
 
+
 export const chatRoom = new ChatRoom();
 const messagesService = new MessagesService();
 const usersService = new UsersService();
@@ -47,10 +48,14 @@ app.ws('/users/websocket', (ws, req) => {
     }
 });
 
-app.ws('/users/websocket/:clientName', (ws, req) => {
-    const clientName = req.params.clientName;
-    processConnection(clientName, ws);
-});
+
+
+// app.ws('/users/websocket/:clientName', (ws, req) => {
+//     const clientName = req.params.clientName;
+//     processConnection(clientName, ws);
+// });
+
+
 
 const port = process.env.PORT || config.get('server.port');
 const server = app.listen(port);
@@ -67,6 +72,7 @@ function processConnection(clientName, ws) {
     ws.on('close', () => {        
         chatRoom.removeConnection(connectionId);
         chatRoom.setUserStatus(clientName, 'OFFLINE');
+        
     });
     ws.on('message', processMessage.bind(undefined, clientName, ws));
 }
@@ -127,5 +133,6 @@ function sendClient(message, client, socketFrom) {
         socketFrom.send(client + " contact doest't exist");
     } else {
         clientSockets.forEach((s) => s.send(message));
+        
     }
 }
