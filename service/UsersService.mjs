@@ -42,12 +42,12 @@ export default class UsersService {
         }
         return accessToken;
     }
-    a
-
-    async getAllUsers() {
+    async getAllAcocunts() {
         const documents = await this.#collection.find({ roles: { $nin: ['ADMIN_ACCOUNTS'] } }).toArray();
         return documents.map(toAccount);
     }
+
+    
 
     async updateUserStatus(username, status) {
         chatRoom.notifyAllClients({ type: 'updateStatus', data: username });
