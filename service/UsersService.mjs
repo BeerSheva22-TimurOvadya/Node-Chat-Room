@@ -3,6 +3,7 @@ import config from 'config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { chatRoom } from '../chat-appl.mjs';
+
 const MONGO_ENV_URI = 'mongodb.env_uri';
 const MONGO_DB_NAME = 'mongodb.db';
 const ENV_JWT_SECRET = 'jwt.env_secret';
@@ -41,7 +42,9 @@ export default class UsersService {
         }
         return accessToken;
     }
-    async getAllAccounts() {
+    a
+
+    async getAllUsers() {
         const documents = await this.#collection.find({ roles: { $nin: ['ADMIN_ACCOUNTS'] } }).toArray();
         return documents.map(toAccount);
     }
@@ -67,6 +70,7 @@ function getJwt(username, roles) {
 function toAccount(accountdb) {
     const res = {
         username: accountdb._id,
+        nickname: accountdb.nickname,
         roles: accountdb.roles,
         passwordHash: accountdb.passwordHash,
         status: accountdb.status        
@@ -75,6 +79,6 @@ function toAccount(accountdb) {
 }
 async function toAccountDB(account) {
     const passwordHash = await bcrypt.hash(account.password, 10);
-    const res = { _id: account.username, passwordHash, roles: account.roles || ['USER'], status: account.status || 'ACTIVE' };
+    const res = { _id: account.username, nickname: account.nickname, passwordHash, roles: account.roles || ['USER'], status: account.status || 'ACTIVE' };
     return res;
 }

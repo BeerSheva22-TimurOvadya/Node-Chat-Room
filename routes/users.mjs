@@ -10,13 +10,15 @@ const usersService = new UsersService();
 
 const schema = Joi.object({
     username: Joi.string().email().required(),
+    nickname: Joi.string().min(3).max(15).required(),
     password: Joi.string().min(8).required(),
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).default(['USER']),
     status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE')    
 });
-users.use(validate(schema));
+// users.use(validate(schema));
 users.post(
     '',
+    validate(schema),
     asyncHandler(async (req, res) => {
         const roles = req.body.roles || ['USER'];
         if (roles.includes('ADMIN') && !req.user) {
