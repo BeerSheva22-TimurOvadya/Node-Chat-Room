@@ -70,6 +70,8 @@ function processConnection(clientName, ws) {
     sendUnreadMessages(clientName, ws);
     chatRoom.setUserStatus(clientName, 'ONLINE'); 
 
+    
+
     ws.on('close', () => {        
         chatRoom.removeConnection(connectionId);
         chatRoom.setUserStatus(clientName, 'OFFLINE');
