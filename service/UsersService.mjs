@@ -26,7 +26,7 @@ export default class UsersService {
                 throw error;
             }
         }
-        chatRoom.notifyAllClients({ type: 'account added', data: account });
+        chatRoom.notifyAllClients({ type: 'ADD', data: account });
         return account;
     }
 

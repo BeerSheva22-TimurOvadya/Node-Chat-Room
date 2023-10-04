@@ -42,4 +42,7 @@ export default class MessagesService {
         return this.#collection.deleteOne({ _id: new ObjectId(messageId) });
     }
     
+    async markMessagesAsReadFromSender(recipient, sender) {
+        return this.#collection.updateMany({ to: recipient, from: sender, read: false }, { $set: { read: true } });
+    }
 }

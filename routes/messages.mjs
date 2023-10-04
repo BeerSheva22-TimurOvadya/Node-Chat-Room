@@ -26,3 +26,13 @@ messagesRouter.delete(
         res.status(201).send(`Message ${req.params.messageId} has been deleted`);
     }),
 );
+
+messagesRouter.put(
+    '/mark-as-read/:sender',
+    asyncHandler(async (req, res) => {
+        const recipient = req.user.username;
+        const sender = req.params.sender;
+        await messagesService.markMessagesAsReadFromSender(recipient, sender);
+        res.status(200).send(`Messages from ${sender} are marked as read`);
+    }),
+);

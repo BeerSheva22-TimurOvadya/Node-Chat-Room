@@ -47,19 +47,6 @@ users.post(
     }),
 );
 
-// users.get(
-//     '/:username',
-//     authVerification('ADMIN_ACCOUNTS', 'ADMIN', 'USER'),
-//     asyncHandler(async (req, res) => {
-//         const username = req.params.username;
-//         const account = await usersService.getAccount(username);
-//         if (!account) {
-//             res.status(404);
-//             throw `account ${username} notfound`;
-//         }
-//         res.send({ ...account, online: account.online });
-//     }),
-// );
 
 
 users.get(
