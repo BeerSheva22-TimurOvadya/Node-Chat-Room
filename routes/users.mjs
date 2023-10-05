@@ -69,8 +69,7 @@ users.post(
             res.status(400);
             throw 'Wrong credentials';
         }
-        chatRoom.setUserStatus(loginData.username, 'ONLINE');
-        console.log("login", loginData)
+        chatRoom.setUserStatus(loginData.username, 'ONLINE');        
         res.send({ accessToken });
         
     }),

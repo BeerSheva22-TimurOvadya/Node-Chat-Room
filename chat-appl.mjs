@@ -43,8 +43,6 @@ app.ws('/users/websocket/:clientName', (ws, req) => {
     }
 });
 
-
-
 const port = process.env.PORT || config.get('server.port');
 const server = app.listen(port);
 server.on('listening', () => console.log(`server is listening on port ${server.address().port}`));
@@ -55,12 +53,9 @@ function processConnection(clientName, ws) {
     chatRoom.addConnection(clientName, connectionId, ws);
 
     sendUnreadMessages(clientName, ws);
-    
-    
 
     ws.on('close', () => {
-        chatRoom.removeConnection(connectionId);          
-        
+        chatRoom.removeConnection(connectionId);
     });
     ws.on('message', processMessage.bind(undefined, clientName, ws));
 }
@@ -108,7 +103,6 @@ async function processMessage(clientName, ws, message) {
         ws.send('wrong message structure');
     }
 }
-
 
 function sendClient(message, client, socketFrom) {
     const clientSockets = chatRoom.getClientWebSockets(client);

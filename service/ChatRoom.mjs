@@ -63,11 +63,8 @@ export default class ChatRoom {
     }
 
     notifyAllClients(message) {
-        const allSockets = this.getAllWebSockets();
-        console.log("Sockets1: ", allSockets)
-        console.log("message: ", message)
-        allSockets.forEach(socket => socket.send(JSON.stringify(message)));
-        console.log("Sockets2: ", allSockets)
+        const allSockets = this.getAllWebSockets();        
+        allSockets.forEach(socket => socket.send(JSON.stringify(message)));        
     }
 
     

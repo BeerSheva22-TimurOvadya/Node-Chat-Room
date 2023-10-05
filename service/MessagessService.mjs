@@ -1,4 +1,3 @@
-
 import MongoConnection from '../domain/MongoConnection.mjs';
 import config from 'config';
 import { ObjectId } from 'mongodb';
@@ -19,30 +18,34 @@ export default class MessagesService {
     async saveMessage(from, to, text, read = false) {
         const now = new Date();
         const message = { from, to, text, timestamp: now, read };
-        chatRoom.notifyAllClients({ type: 'newMessage', data: message.to});
+        chatRoom.notifyAllClients({ type: 'newMessage', data: message.to });
         return this.#collection.insertOne(message);
     }
     async getUnreadMessages(username) {
         return this.#collection.find({ to: username, read: false }).toArray();
     }
-    
+
     async markMessagesAsRead(username) {
         return this.#collection.updateMany({ to: username, read: false }, { $set: { read: true } });
     }
     async getAllMessages() {
         return this.#collection.find({}).toArray();
     }
-    
+
     async getUserMessages(username) {
         return this.#collection.find({ $or: [{ from: username }, { to: username }] }).toArray();
     }
-    
+
     async deleteMessage(messageId) {
         chatRoom.notifyAllClients({ type: 'delete', data: messageId });
         return this.#collection.deleteOne({ _id: new ObjectId(messageId) });
     }
-    
+
     async markMessagesAsReadFromSender(recipient, sender) {
-        return this.#collection.updateMany({ to: recipient, from: sender, read: false }, { $set: { read: true } });
+        chatRoom.notifyAllClients({ type: 'Read', data: recipient });
+        return this.#collection.updateMany(
+            { to: recipient, from: sender, read: false },
+            { $set: { read: true } },
+        );
     }
 }
