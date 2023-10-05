@@ -13,7 +13,7 @@ const schema = Joi.object({
     nickname: Joi.string().min(3).max(15).required(),
     password: Joi.string().min(8).required(),
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).default(['USER']),
-    status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE')    
+    status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE'),
 });
 // users.use(validate(schema));
 users.post(
@@ -36,7 +36,6 @@ users.post(
             roles,
             status: req.body.status || 'ACTIVE',
         });
-        
 
         if (accountRes == null) {
             res.status(400).send(`account ${req.body.username} already exists`);
@@ -47,16 +46,14 @@ users.post(
     }),
 );
 
-
-
 users.get(
     '/',
     asyncHandler(async (req, res) => {
-        const allAccounts = await usersService.getAllAccounts();        
+        const allAccounts = await usersService.getAllAccounts();
         const clientsWithStatus = allAccounts.map((account) => ({
-            ...account, 
-            onlineStatus: chatRoom.getUserStatus(account.username)
-        }));        
+            ...account,
+            onlineStatus: chatRoom.getUserStatus(account.username),
+        }));
         if (!allAccounts || allAccounts.length === 0) {
             return res.status(404).send('No users found');
         }
@@ -72,7 +69,19 @@ users.post(
             res.status(400);
             throw 'Wrong credentials';
         }
+        chatRoom.setUserStatus(loginData.username, 'ONLINE');
+        console.log("login", loginData)
         res.send({ accessToken });
+        
+    }),
+);
+
+users.post(
+    '/logout',
+    asyncHandler(async (req, res) => {
+        const logoutData = req.body;
+        chatRoom.setUserStatus(logoutData.username, 'OFFLINE');       
+        res.send({ message: 'Logged out successfully' }); 
     }),
 );
 
@@ -84,8 +93,8 @@ users.delete(
         if (!user) {
             return res.status(404).send(`User ${req.params.username} does not exist`);
         }
-        await usersService.deleteUser(req.params.username);        
-       
+        await usersService.deleteUser(req.params.username);
+
         res.status(201).send(`User ${req.params.username} has been deleted`);
     }),
 );
@@ -108,9 +117,7 @@ users.put(
             return res.status(400).send(`User ${req.params.username} is already ${newStatus}`);
         }
 
-        await usersService.updateUserStatus(req.params.username, newStatus);        
+        await usersService.updateUserStatus(req.params.username, newStatus);
         res.status(201).send(`User ${req.params.username} status was changed to ${newStatus}`);
     }),
 );
-
-

@@ -14,15 +14,12 @@ import auth from './middleware/auth.mjs';
 import MessagesService from './service/MessagessService.mjs';
 import UsersService from './service/UsersService.mjs';
 
-
 const app = express();
 const expressWsInstant = expressWs(app);
-
 
 export const chatRoom = new ChatRoom();
 const messagesService = new MessagesService();
 const usersService = new UsersService();
-
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -32,14 +29,11 @@ app.use(auth);
 app.use('/messages', messagesRouter);
 app.use('/users', users);
 
-
 app.get('/users', (req, res) => {
     res.send(chatRoom.getClients());
 });
 
-
-
-app.ws('/users/websocket', (ws, req) => {
+app.ws('/users/websocket/:clientName', (ws, req) => {
     const clientName = ws.protocol || req.query.clientName;
     if (!clientName) {
         ws.send('Must be client name');
@@ -48,13 +42,6 @@ app.ws('/users/websocket', (ws, req) => {
         processConnection(clientName, ws);
     }
 });
-
-
-
-// app.ws('/users/websocket/:clientName', (ws, req) => {
-//     const clientName = req.params.clientName;
-//     processConnection(clientName, ws);
-// });
 
 
 
@@ -68,13 +55,12 @@ function processConnection(clientName, ws) {
     chatRoom.addConnection(clientName, connectionId, ws);
 
     sendUnreadMessages(clientName, ws);
-    chatRoom.setUserStatus(clientName, 'ONLINE'); 
-
+    
     
 
-    ws.on('close', () => {        
-        chatRoom.removeConnection(connectionId);
-        chatRoom.setUserStatus(clientName, 'OFFLINE');        
+    ws.on('close', () => {
+        chatRoom.removeConnection(connectionId);          
+        
     });
     ws.on('message', processMessage.bind(undefined, clientName, ws));
 }
@@ -84,50 +70,45 @@ async function sendUnreadMessages(clientName, ws) {
         const unreadMessages = await messagesService.getUnreadMessages(clientName);
         unreadMessages.forEach((msg) => {
             ws.send(JSON.stringify({ from: msg.from, text: msg.text }));
-        });        
-        
+        });
     } catch (error) {
-        console.error("Error sending unread messages", error);
+        console.error('Error sending unread messages', error);
     }
 }
 
 async function processMessage(clientName, ws, message) {
     try {
         const messageObj = JSON.parse(message.toString());
+        const from = messageObj.from;
         const to = messageObj.to;
         const text = messageObj.text;
 
-        if (!text) {
-            ws.send("Your message doesn't contain text");
+        if (!from || !to || !text) {
+            ws.send("Your message doesn't have the necessary fields");
             return;
         }
-        
-        if (!to) {
-            ws.send("Recipient is not specified");
-            return;
-        }
-        
+
         const userExists = await usersService.getAccount(to);
         if (!userExists) {
             ws.send(`Error: User ${to} does not exist`);
             return;
         }
-        
-        const objSent = JSON.stringify({ from: clientName, text });
-        const recipients = chatRoom.getClientWebSockets(to);        
+
+        const objSent = JSON.stringify({ from, text });
+        const recipients = chatRoom.getClientWebSockets(to);
         const isRecipientOnline = recipients && recipients.length > 0;
 
         if (isRecipientOnline) {
             sendClient(objSent, to, ws);
-            await messagesService.saveMessage(clientName, to, text, true);
+            await messagesService.saveMessage(from, to, text, true);
         } else {
-            await messagesService.saveMessage(clientName, to, text, false);
+            await messagesService.saveMessage(from, to, text, false);
         }
-
     } catch (error) {
         ws.send('wrong message structure');
     }
 }
+
 
 function sendClient(message, client, socketFrom) {
     const clientSockets = chatRoom.getClientWebSockets(client);
@@ -135,6 +116,5 @@ function sendClient(message, client, socketFrom) {
         socketFrom.send(client + " contact doest't exist");
     } else {
         clientSockets.forEach((s) => s.send(message));
-        
     }
 }

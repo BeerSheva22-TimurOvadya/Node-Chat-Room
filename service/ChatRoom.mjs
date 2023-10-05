@@ -13,6 +13,7 @@ export default class ChatRoom {
     setUserStatus(username, onlineStatus) {
         this.#onlineStatus[username] = onlineStatus;
         this.notifyAllClients({ type: 'updateOnlineStatus', data: username });
+        
     }
     
     
@@ -63,7 +64,10 @@ export default class ChatRoom {
 
     notifyAllClients(message) {
         const allSockets = this.getAllWebSockets();
+        console.log("Sockets1: ", allSockets)
+        console.log("message: ", message)
         allSockets.forEach(socket => socket.send(JSON.stringify(message)));
+        console.log("Sockets2: ", allSockets)
     }
 
     
