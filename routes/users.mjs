@@ -27,6 +27,16 @@ users.post(
         res.status(200).send({ exists });
     })
 );
+users.get(
+    '/:username/status',
+    asyncHandler(async (req, res) => {
+        const user = await usersService.getAccount(req.params.username);
+        if (!user) {
+            return res.status(404).send(`User ${req.params.username} does not exist`);
+        }
+        res.send({ status: user.status });
+    }),
+);
 users.post(
     '',
     validate(schema),
