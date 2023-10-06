@@ -15,7 +15,18 @@ const schema = Joi.object({
     roles: Joi.array().items(Joi.string().valid('ADMIN', 'USER')).default(['USER']),
     status: Joi.string().valid('ACTIVE', 'BLOCKED').default('ACTIVE'),
 });
-// users.use(validate(schema));
+
+const emailSchema = Joi.object({
+    email: Joi.string().email().required(),
+});
+users.post(
+    '/check-email',
+    validate(emailSchema),
+    asyncHandler(async (req, res) => {
+        const exists = await usersService.emailExists(req.body.email);        
+        res.status(200).send({ exists });
+    })
+);
 users.post(
     '',
     validate(schema),

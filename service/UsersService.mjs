@@ -56,6 +56,11 @@ export default class UsersService {
         chatRoom.notifyAllClients({ type: 'deleteAccount', data: username });
         return this.#collection.deleteOne({ _id: username });
     }
+
+    async emailExists(email) {
+        const document = await this.#collection.findOne({ _id: email });
+        return document !== null;
+    }
    
     
 }
