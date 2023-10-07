@@ -18,7 +18,7 @@ export default class MessagesService {
     async saveMessage(from, to, text, read = false) {
         const now = new Date();
         const message = { from, to, text, timestamp: now, read };
-        chatRoom.notifyAllClients({ type: 'newMessage', data: message.to });
+        chatRoom.notifyAllClients({ type: 'NEW_MESSAGE', data: message.to });
         return this.#collection.insertOne(message);
     }
     async getUnreadMessages(username) {
@@ -37,12 +37,12 @@ export default class MessagesService {
     }
 
     async deleteMessage(messageId) {
-        chatRoom.notifyAllClients({ type: 'delete', data: messageId });
+        chatRoom.notifyAllClients({ type: 'DELETE_MESSAGE', data: messageId });
         return this.#collection.deleteOne({ _id: new ObjectId(messageId) });
     }
 
     async markMessagesAsReadFromSender(recipient, sender) {
-        chatRoom.notifyAllClients({ type: 'Read', data: recipient });
+        chatRoom.notifyAllClients({ type: 'MARK_READ_MESSAGE', data: recipient });
         return this.#collection.updateMany(
             { to: recipient, from: sender, read: false },
             { $set: { read: true } },

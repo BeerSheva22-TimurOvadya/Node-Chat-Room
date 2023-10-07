@@ -26,7 +26,7 @@ export default class UsersService {
                 throw error;
             }
         }
-        chatRoom.notifyAllClients({ type: 'ADD', data: account });
+        chatRoom.notifyAllClients({ type: 'ACCOUNT_ADDED', data: account });
         return account;
     }
 
@@ -48,12 +48,12 @@ export default class UsersService {
     }
 
     async updateUserStatus(username, status) {
-        chatRoom.notifyAllClients({ type: 'updateStatus', data: username });
+        chatRoom.notifyAllClients({ type: 'STATUS_CHANGED', data: username });
         return this.#collection.updateOne({ _id: username }, { $set: { status: status } });
     }
     
     async deleteUser(username) {
-        chatRoom.notifyAllClients({ type: 'deleteAccount', data: username });
+        chatRoom.notifyAllClients({ type: 'ACCOUNT_DELETED', data: username });
         return this.#collection.deleteOne({ _id: username });
     }
 

@@ -12,8 +12,7 @@ export default class ChatRoom {
     
     setUserStatus(username, onlineStatus) {
         this.#onlineStatus[username] = onlineStatus;
-        this.notifyAllClients({ type: 'updateOnlineStatus', data: username });
-        
+        this.notifyAllClients({ type: 'UPDATE_ONLINE_STATUS', data: username });        
     }
     
     
